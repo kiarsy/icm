@@ -1,5 +1,3 @@
-using System.Collections.Specialized;
-using AutoMapper;
 using ICMarkets.Application.Abstractions;
 using ICMarkets.Application.Abstractions.Repositories;
 using ICMarkets.Infrastructure.BackgroundJobs;
@@ -19,6 +17,8 @@ namespace ICMarkets.Infrastructure;
 
 public static class DependencyInjection
 {
+    public const string DatabaseHealthName = "database";
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         //Options
@@ -33,7 +33,7 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("Default") ?? "Data Source=icmarkets.db";
         services.AddDbContext<IcMarketsDbContext>(options => options.UseSqlite(connectionString));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+        services.AddHealthChecks().AddDbContextCheck<IcMarketsDbContext>(name: DatabaseHealthName, tags: ["ready"]);
         //Repositories
         services.AddScoped<IBlockchainRepository, BlockchainRepository>();
         services.AddScoped<IEventStoreRepository, EventStoreRepository>();

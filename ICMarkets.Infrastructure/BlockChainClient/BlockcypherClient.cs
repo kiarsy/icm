@@ -33,7 +33,6 @@ public class BlockCypherClient(
         {
             throw new BlockCypherRateLimitException();
         }
-        logger.LogInformation("PASSSEDDDDD");
         var blockChain = BlockChain.FromIdentifier(requestChainIdentifier);
         var path = blockChain.ApiPath;
         if (!string.IsNullOrWhiteSpace(options.Value.Token))

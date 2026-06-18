@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: icmarkets-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      # SQLite file lives on a named volume so data persists across restarts.
+      - ConnectionStrings__Default=Data Source=/app/data/icmarkets.db
+      - Polling__Enabled=true
+      - Polling__IntervalSeconds=60
+      - Cors__AllowedOrigins__0=*
+    ports:
+      - "8080:8080"
+    volumes:
+      - api-data:/app/data
+
+volumes:
+  api-data:

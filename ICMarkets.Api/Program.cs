@@ -1,8 +1,12 @@
 using System.Reflection;
+using System.Text.Json;
 using ICMarkets.Api.Infrastructure.Options;
 using ICMarkets.Api.Middlewares;
 using ICMarkets.Application;
 using ICMarkets.Infrastructure;
+using ICMarkets.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,8 +65,35 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ICMarkets"));
 }
 
-app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
+app.UseCors(CorsOptions.PolicyName);
+
 app.MapControllers();
+
+app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false, ResponseWriter = WriteHealthResponse });
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Name == ICMarkets.Infrastructure.DependencyInjection.DatabaseHealthName,
+    ResponseWriter = WriteHealthResponse
+});
+
 app.Run();
+return;
+
+static Task WriteHealthResponse(HttpContext context, HealthReport report)
+{
+    context.Response.ContentType = "application/json";
+    var payload = new
+    {
+        status = report.Status.ToString(),
+        totalDurationMs = report.TotalDuration.TotalMilliseconds,
+        checks = report.Entries.Select(e => new
+        {
+            name = e.Key,
+            status = e.Value.Status.ToString(),
+            description = e.Value.Description
+        })
+    };
+    return context.Response.WriteAsync(JsonSerializer.Serialize(payload));
+}
