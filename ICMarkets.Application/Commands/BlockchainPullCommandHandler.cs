@@ -11,7 +11,7 @@ public class BlockchainPullCommandHandler(
     IBlockChainClient blockChainClient,
     IClock clock,
     IUnitOfWork unitOfWork,
-    IBlockchainSnapshotRepository blockchainSnapshotRepository,
+    IBlockchainRepository blockchainRepository,
     IEventStoreRepository eventStoreRepository,
     ILogger<BlockchainPullCommandHandler> logger)
     : IRequestHandler<BlockchainPullCommand>
@@ -24,7 +24,7 @@ public class BlockchainPullCommandHandler(
         snapshot.CreatedAt = clock.UtcNow;
 
         await unitOfWork.BeginAsync(cancellationToken);
-        await blockchainSnapshotRepository.AddAsync(snapshot, cancellationToken);
+        await blockchainRepository.AddAsync(snapshot, cancellationToken);
         await eventStoreRepository.AppendAsync(new BlockchainSnapshotCaptured(snapshot), cancellationToken);
         await unitOfWork.CommitAsync(cancellationToken);
 

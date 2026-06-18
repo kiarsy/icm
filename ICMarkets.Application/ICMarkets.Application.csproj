@@ -16,8 +16,4 @@
     <ItemGroup>
       <ProjectReference Include="..\ICMarkets.Domain\ICMarkets.Domain.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Common\" />
-    </ItemGroup>
 </Project>

@@ -2,13 +2,14 @@ using ICMarkets.Application.Abstractions.Repositories;
 using ICMarkets.Domain;
 using ICMarkets.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+
 namespace ICMarkets.Infrastructure.Repositories;
 
-public class BlockchainSnapshotRepository(IcMarketsDbContext context) : IBlockchainSnapshotRepository
+public class BlockchainRepository(IcMarketsDbContext context) : IBlockchainRepository
 {
     public async Task AddAsync(BlockchainModel model, CancellationToken cancellationToken)
     {
-        var existing = await context.BlockChainSnapshots
+        var existing = await context.BlockChain
             .FirstOrDefaultAsync(
                 s => s.BlockchainIdentifier == model.BlockchainIdentifier,
                 cancellationToken);
@@ -16,7 +17,7 @@ public class BlockchainSnapshotRepository(IcMarketsDbContext context) : IBlockch
         if (existing is null)
         {
             model.Revision = 1;
-            context.BlockChainSnapshots.Add(model);
+            context.BlockChain.Add(model);
             return;
         }
 
@@ -42,5 +43,21 @@ public class BlockchainSnapshotRepository(IcMarketsDbContext context) : IBlockch
         existing.BaseFee = model.BaseFee;
         existing.RawJson = model.RawJson;
         existing.Revision += 1;
+    }
+
+    public async Task<IReadOnlyList<BlockchainModel>> GetLatest(
+        string? identifier,
+        CancellationToken cancellationToken = default)
+    {
+        if (identifier != null)
+        {
+            return await context.BlockChain
+                .Where(it=> it.BlockchainIdentifier == identifier)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
+        return await context.BlockChain
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }

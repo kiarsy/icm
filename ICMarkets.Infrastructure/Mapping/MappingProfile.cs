@@ -11,8 +11,6 @@ public class MappingProfile : Profile
     {
         CreateMap<BlockCypherResponse, BlockchainModel>()
             .ForMember(dest => dest.Time,
-                opt => opt.MapFrom(src => src.Time.UtcDateTime))
-            .ForMember(dest => dest.RawJson,
-                opt => opt.Ignore());
+                opt => opt.MapFrom(src => src.Time.UtcDateTime));
     }
 }

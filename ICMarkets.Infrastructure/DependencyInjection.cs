@@ -35,7 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         //Repositories
-        services.AddScoped<IBlockchainSnapshotRepository, BlockchainSnapshotRepository>();
+        services.AddScoped<IBlockchainRepository, BlockchainRepository>();
         services.AddScoped<IEventStoreRepository, EventStoreRepository>();
 
         //Http

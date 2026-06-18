@@ -4,7 +4,7 @@
 
 ### 1-run Migration
 ```bash
-dotnet ef database update \                                                                                                                                                                                                                                              development 
+dotnet ef database update \ 
     --project ICMarkets.Infrastructure \
     --startup-project ICMarkets.Api
 ```

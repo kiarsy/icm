@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MediaRPipelineBehavior<,>));
         services.AddValidatorsFromAssembly(assembly);
+        
         return services;
     }
 }
