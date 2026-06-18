@@ -65,5 +65,4 @@ public record BlockchainApiResponse
     public long? BaseFee { get; set; }
 
     public string RawJson { get; set; } = string.Empty;
-    public int Revision { get; set; }
 }

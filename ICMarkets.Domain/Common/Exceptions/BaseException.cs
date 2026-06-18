@@ -33,7 +33,7 @@ public abstract class BaseException : Exception
 }
 
 public class BlockCypherRateLimitException()
-    : BaseException("BlockCypher reached rate limit")
+    : BaseException("BlockCypher reached rate limit", HttpStatusCode.TooManyRequests, null)
 {
 }
 
@@ -43,6 +43,6 @@ public class BlockCypherTooManyRequestException()
 }
 
 public class ConcurrentException(string entity)
-    : BaseException($"A concurrent exception happened when manipulating {entity}", HttpStatusCode.TooManyRequests, null)
+    : BaseException($"A concurrent exception happened when manipulating {entity}", HttpStatusCode.Conflict, null)
 {
 }

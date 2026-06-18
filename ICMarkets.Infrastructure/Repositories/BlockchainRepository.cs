@@ -16,7 +16,7 @@ public class BlockchainRepository(IcMarketsDbContext context) : IBlockchainRepos
 
         if (existing is null)
         {
-            model.Revision = 1;
+            context.Entry(model).Property("Revision").CurrentValue = 1;
             context.BlockChain.Add(model);
             return;
         }
@@ -42,7 +42,9 @@ public class BlockchainRepository(IcMarketsDbContext context) : IBlockchainRepos
         existing.LowPriorityFee = model.LowPriorityFee;
         existing.BaseFee = model.BaseFee;
         existing.RawJson = model.RawJson;
-        existing.Revision += 1;
+        
+        var entry = context.Entry(existing);
+        entry.Property("Revision").CurrentValue = (int)entry.Property("Revision").CurrentValue! + 1;
     }
 
     public async Task<IReadOnlyList<BlockchainModel>> GetLatest(

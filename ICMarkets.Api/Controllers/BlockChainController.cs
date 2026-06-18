@@ -32,7 +32,7 @@ public sealed class BlockChainController(ISender mediator, IMapper mapper) : Con
 
     /// <summary>The latest captured status for each supported blockchain.</summary>
     /// <remarks>Returns the most recent capture result per blockchain.</remarks>
-    [HttpGet("/latest")]
+    [HttpGet("latest")]
     [ProducesResponseType(typeof(IEnumerable<BlockchainApiResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IReadOnlyList<BlockchainApiResponse>>> GetLatestStatus(
@@ -45,7 +45,7 @@ public sealed class BlockChainController(ISender mediator, IMapper mapper) : Con
 
     /// <summary>The latest captured status of an identifier.</summary>
     /// <remarks>Returns the most recent capture result for a blockchain.</remarks>
-    [HttpGet("/latest/{identifier}")]
+    [HttpGet("latest/{identifier}")]
     [ProducesResponseType(typeof(BlockchainApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
