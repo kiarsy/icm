@@ -1,11 +1,11 @@
 namespace ICMarkets.Domain;
 
-public class BlockchainSnapshot
+public class BlockchainModel
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string BlockchainIdentifier { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-
+    public DateTime UpdatedAt { get; set; }
     // common to every Block
     public string Name { get; set; } = string.Empty;
     public long Height { get; set; }
@@ -34,5 +34,5 @@ public class BlockchainSnapshot
     public long? BaseFee { get; set; }
 
     public string RawJson { get; set; } = string.Empty;
-
+    public int Revision { get; set; }
 }

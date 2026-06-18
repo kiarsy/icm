@@ -4,5 +4,5 @@ namespace ICMarkets.Application.Abstractions;
 
 public interface IBlockChainClient
 {
-    Task<BlockchainSnapshot> GetChainAsync(string requestChainIdentifier, CancellationToken cancellationToken);
+    Task<BlockchainModel> GetChainAsync(string requestChainIdentifier, CancellationToken cancellationToken);
 }

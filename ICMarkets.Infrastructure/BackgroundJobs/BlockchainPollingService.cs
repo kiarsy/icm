@@ -34,7 +34,7 @@ public class BlockchainPollingService(
 
     private async Task PollAllChainsAsync(CancellationToken cancellationToken)
     {
-        var captures = BlockChain.All.Select(blockChain => CaptureAsync(blockChain, cancellationToken));
+        var captures = new[] { BlockChain.BtcMain }.Select(blockChain => CaptureAsync(blockChain, cancellationToken));        
         await Task.WhenAll(captures);
     }
 

@@ -1,3 +1,4 @@
+using ICMarkets.Api.Infrastructure.Options;
 using ICMarkets.Api.Middlewares;
 using ICMarkets.Application;
 using ICMarkets.Infrastructure;
@@ -21,6 +22,22 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Error Handling
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+//Cors
+builder.Services.Configure<CorsOptions>(builder.Configuration.GetSection(CorsOptions.SectionName));
+var corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>() ?? new CorsOptions();
+builder.Services.AddCors(options => options.AddPolicy(CorsOptions.PolicyName, policy =>
+{
+    var origins = corsOptions.AllowedOrigins;
+    if (origins.Length == 0 || origins.Contains("*"))
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    }
+    else
+    {
+        policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
+    }
+}));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
