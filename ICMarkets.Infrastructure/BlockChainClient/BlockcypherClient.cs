@@ -52,7 +52,7 @@ public class BlockCypherClient(
         var responseDto = JsonSerializer.Deserialize<BlockCypherResponse>(rawJson, JsonOptions)
                           ?? throw new InvalidOperationException(
                               $"BlockCypher returned an empty body for {requestChainIdentifier}.");
-
+        responseDto.RawJson = rawJson;
         return mapper.Map<BlockchainModel>(responseDto);
     }
 }

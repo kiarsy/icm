@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ICMarkets.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -6,8 +7,9 @@ namespace ICMarkets.Infrastructure.Persistence;
 
 public class IcMarketsDbContext(DbContextOptions<IcMarketsDbContext> options) : DbContext(options)
 {
-    public DbSet<BlockchainModel> BlockChainSnapshots => Set<BlockchainModel>();
+    public DbSet<BlockchainModel> BlockChain => Set<BlockchainModel>();
     public DbSet<EventEnvelope> Events => Set<EventEnvelope>();
+    private static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,8 +27,11 @@ public class IcMarketsDbContext(DbContextOptions<IcMarketsDbContext> options) : 
             entity.Property(s => s.Time).HasConversion(utcConverter);
             entity.Property(x => x.Revision).IsConcurrencyToken();
             entity.HasIndex(s => new { s.BlockchainIdentifier }).IsUnique();
-
         });
+
+        var converter = new ValueConverter<IDomainEvent, string>(
+            v => JsonSerializer.Serialize<IDomainEvent>(v, PayloadOptions),
+            v => JsonSerializer.Deserialize<IDomainEvent>(v, PayloadOptions)!);
 
         modelBuilder.Entity<EventEnvelope>(entity =>
         {
@@ -34,9 +39,10 @@ public class IcMarketsDbContext(DbContextOptions<IcMarketsDbContext> options) : 
             entity.HasKey(e => e.Id);
             entity.Property(e => e.EventId).IsRequired();
             entity.Property(e => e.Type).IsRequired();
-            entity.Property(e => e.Payload).IsRequired();
+            entity.Property(e => e.Payload).IsRequired().HasConversion(converter)
+                .HasColumnType("text");
             entity.Property(e => e.OccurredAt).HasConversion(utcConverter);
-            entity.HasIndex(e => new { e.EventId, e.Version }).IsUnique();
+            entity.HasIndex(e => new { e.EventId, e.OccurredAt }).IsUnique();
         });
     }
 }

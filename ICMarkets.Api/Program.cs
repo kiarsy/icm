@@ -1,3 +1,4 @@
+using System.Reflection;
 using ICMarkets.Api.Infrastructure.Options;
 using ICMarkets.Api.Middlewares;
 using ICMarkets.Application;
@@ -18,6 +19,10 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Services(services)
     .Enrich.FromLogContext()
     .WriteTo.Console());
+
+builder.Services.AddAutoMapper(
+    _ => { },
+    typeof(Program).Assembly);
 
 // Error Handling
 builder.Services.AddProblemDetails();
@@ -41,7 +46,11 @@ builder.Services.AddCors(options => options.AddPolicy(CorsOptions.PolicyName, po
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+});
 
 var app = builder.Build();
 

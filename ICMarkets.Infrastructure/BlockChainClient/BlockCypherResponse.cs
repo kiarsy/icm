@@ -40,4 +40,5 @@ public class BlockCypherResponse
 
     [JsonPropertyName("low_priority_fee")] public long? LowPriorityFee { get; set; }
     [JsonPropertyName("base_fee")] public long? BaseFee { get; set; }
+    public string RawJson { get; set; }
 }

@@ -8,33 +8,50 @@ namespace ICMarkets.Infrastructure.Repositories;
 
 public class EventStoreRepository(IcMarketsDbContext context) : IEventStoreRepository
 {
-    private static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web);
 
     public async Task AppendAsync(IDomainEvent @event, CancellationToken cancellationToken)
     {
-        var nextVersion = await NextVersionAsync(@event.EventId, cancellationToken);
-        nextVersion = 1;
         var envelope = new EventEnvelope
         {
             Id = Guid.NewGuid(),
             EventId = @event.EventId,
-            Version = nextVersion,
             Type = @event.GetType().Name,
             OccurredAt = @event.OccurredAt,
-            Payload = JsonSerializer.Serialize(@event, @event.GetType(), PayloadOptions)
+            Payload = @event
         };
 
         context.Events.Add(envelope);
     }
-    
-    private async Task<long> NextVersionAsync(string eventId, CancellationToken cancellationToken)
-    {
-        var latest = await context.Events
-            .Where(e => e.EventId == eventId)
-            .Select(e => (long?)e.Version)
-            .MaxAsync(cancellationToken);
 
-        return (latest ?? 0) + 1;
+    public async Task<IReadOnlyList<IDomainEvent>> GetAllHistoryAsync(string? identifier, int page, int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = context.Events
+            .AsNoTracking()
+            .Where(it => it.Type == nameof(BlockchainSnapshotCaptured));
+
+        if (!string.IsNullOrEmpty(identifier))
+        {
+            query = query.Where(it => it.EventId == identifier);
+        }
+
+        return await query.OrderByDescending(s => s.OccurredAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(it => it.Payload)
+            .ToListAsync(cancellationToken);
     }
 
+    public async Task<long> CountAsync(string identifier, CancellationToken cancellationToken)
+    {
+        var query = context.Events.AsNoTracking()
+            .Where(it => it.Type == nameof(BlockchainSnapshotCaptured));
+
+        if (!string.IsNullOrEmpty(identifier))
+        {
+            query = query.Where(s => s.EventId == identifier);
+        }
+
+        return await query.LongCountAsync(cancellationToken);
+    }
 }
