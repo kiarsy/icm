@@ -1,5 +1,6 @@
+using ICMarkets.Application.Abstractions;
 using MediatR;
 
 namespace ICMarkets.Application.Commands;
 
-public sealed record BlockchainPullCommand(string BlockchainIdentifier) : IRequest;
+public sealed record BlockchainPullCommand(string BlockchainIdentifier) : IRequest , IRequestRetriable;

@@ -37,5 +37,7 @@ public sealed record BlockChain
             string.Equals(c.BlockChainIdentifier, identifier, StringComparison.OrdinalIgnoreCase));
     }
 
+    public static bool IsSupported(string? identifier) => FromIdentifier(identifier) is not null;
+
     public override string ToString() => BlockChainIdentifier;
 }

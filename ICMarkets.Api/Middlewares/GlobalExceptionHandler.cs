@@ -1,3 +1,5 @@
+using FluentValidation;
+using ICMarkets.Domain.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +51,17 @@ public class GlobalExceptionHandler(
         IHostEnvironment environment)
         => exception switch
         {
+            BaseException ex => (
+                ex.HttpCode,
+                ex.Message,
+                null
+            ),
+            ValidationException ve => (
+                StatusCodes.Status400BadRequest,
+                "One or more validation errors occurred.",
+                ve.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).Distinct().ToArray())),
             _ => (
                 StatusCodes.Status500InternalServerError,
                 "An unexpected error occurred.",

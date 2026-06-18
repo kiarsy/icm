@@ -9,7 +9,7 @@ public class MappingProfile : Profile
 
     public MappingProfile()
     {
-        CreateMap<BlockCypherResponse, BlockchainSnapshot>()
+        CreateMap<BlockCypherResponse, BlockchainModel>()
             .ForMember(dest => dest.Time,
                 opt => opt.MapFrom(src => src.Time.UtcDateTime))
             .ForMember(dest => dest.RawJson,
