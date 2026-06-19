@@ -33,7 +33,11 @@ public class BlockCypherClient(
         {
             throw new BlockCypherRateLimitException();
         }
-        var blockChain = BlockChain.FromIdentifier(requestChainIdentifier);
+
+        var blockChain = BlockChain.FromIdentifier(requestChainIdentifier)
+                         ?? throw new BadRequestException(
+                             $"Unknown blockchain identifier '{nameof(requestChainIdentifier)}'.");
+
         var path = blockChain.ApiPath;
         if (!string.IsNullOrWhiteSpace(options.Value.Token))
         {
@@ -45,6 +49,7 @@ public class BlockCypherClient(
         {
             throw new BlockCypherTooManyRequestException();
         }
+
         response.EnsureSuccessStatusCode();
 
         var rawJson = await response.Content.ReadAsStringAsync(cancellationToken);

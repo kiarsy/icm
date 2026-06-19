@@ -1,4 +1,3 @@
-using System.Text.Json;
 using ICMarkets.Application.Abstractions.Repositories;
 using ICMarkets.Application.Common;
 using ICMarkets.Domain;
@@ -14,8 +13,6 @@ public class GetAllHistoryQueryHandler(
     IEventStoreRepository eventStoreRepository)
     : IRequestHandler<GetAllHistoryQuery, PagedResult<IDomainEvent>>
 {
-    private static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web);
-
     public async Task<PagedResult<IDomainEvent>> Handle(GetAllHistoryQuery request,
         CancellationToken cancellationToken)
     {

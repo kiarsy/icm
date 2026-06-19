@@ -42,7 +42,7 @@ public static class DependencyInjection
         services.AddHttpClient<IBlockChainClient, BlockCypherClient>((sp, client) =>
             {
                 var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<BlockCypherOptions>>().Value;
-                client.BaseAddress = new Uri(options.BaseUrl);
+                client.BaseAddress = new Uri("https://api.blockcypher.com/v1/");
                 client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
             })
             .AddPolicyHandler((sp, _) =>

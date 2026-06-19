@@ -43,6 +43,11 @@ public class BlockCypherTooManyRequestException()
 }
 
 public class ConcurrentException(string entity)
-    : BaseException($"A concurrent exception happened when manipulating {entity}", HttpStatusCode.Conflict, null)
+    : BaseException($"A concurrent exception happened when manipulating {entity}", HttpStatusCode.ServiceUnavailable, null)
+{
+}
+
+public class BadRequestException(string message)
+    : BaseException(message, HttpStatusCode.BadRequest, null)
 {
 }

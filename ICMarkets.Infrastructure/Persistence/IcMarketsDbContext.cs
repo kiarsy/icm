@@ -25,7 +25,6 @@ public class IcMarketsDbContext(DbContextOptions<IcMarketsDbContext> options) : 
             entity.Property(s => s.CreatedAt).HasConversion(utcConverter);
             entity.Property(s => s.UpdatedAt).HasConversion(utcConverter);
             entity.Property(s => s.Time).HasConversion(utcConverter);
-            // entity.Property(x => x.Revision).IsConcurrencyToken();
             entity.HasIndex(s => new { s.BlockchainIdentifier }).IsUnique();
             entity.Property<int>("Revision").IsConcurrencyToken();
 

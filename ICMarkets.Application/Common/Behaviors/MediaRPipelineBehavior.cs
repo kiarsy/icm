@@ -1,5 +1,6 @@
 using FluentValidation;
 using ICMarkets.Application.Abstractions;
+using ICMarkets.Domain.Common.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -47,7 +48,7 @@ public sealed class MediaRPipelineBehavior<TRequest, TResponse>(
                 {
                     return await next();
                 }
-                catch (Exception) when (attempt < maxAttempts)
+                catch (ConcurrentException) when (attempt < maxAttempts)
                 {
                     logger.LogWarning("Exception on handling {request}, retry {Attempt}/{Max}",
                         request.GetType().Name, attempt, maxAttempts);
