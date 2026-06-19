@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: icmarkets-api
+    environment:
+      # Development so Swagger is available inside the container.
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8081
+      - ConnectionStrings__Default=Data Source=/app/data/icmarkets.db
+      - Polling__Enabled=true
+      - Polling__IntervalSeconds=60
+      - Cors__AllowedOrigins__0=*
+      # - BlockCypher__Token=${BLOCKCYPHER_TOKEN}
+    ports:
+      - "8081:8081"
+    volumes:
+      - api-data:/app/data
+
+volumes:
+  api-data:
