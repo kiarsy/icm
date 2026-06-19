@@ -7,3 +7,4 @@ icmarkets.db
 icmarkets.db.*
 /.idea/
 appsettings.Development.json
+.sln.DotSettings.user
