@@ -70,11 +70,6 @@ public static class DependencyInjection
                 AutoReplenishment = true
             });
         });
-
-        //Mapper
-        services.AddAutoMapper(
-            _ => { },
-            typeof(DependencyInjection).Assembly);
         return services;
     }
 }

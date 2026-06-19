@@ -27,7 +27,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 builder.Services.AddAutoMapper(
     _ => { },
-    typeof(Program).Assembly);
+    typeof(Program).Assembly,
+    typeof(ICMarkets.Infrastructure.DependencyInjection).Assembly);
 
 // Error Handling
 builder.Services.AddProblemDetails();
@@ -65,12 +66,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-    app.UseSwagger();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ICMarkets"));
-}
+app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ICMarkets"));
 
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();

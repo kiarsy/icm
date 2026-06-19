@@ -32,7 +32,7 @@ public class BlockCypherClientTests
 
     private static IMapper CreateMapper()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()), NullLoggerFactory.Instance);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
         return config.CreateMapper();
     }
 
